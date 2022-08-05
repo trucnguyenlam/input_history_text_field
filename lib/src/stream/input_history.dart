@@ -152,16 +152,16 @@ class InputHistoryController {
       return;
     }
 
-    var filterdList = this
+    var filteredList = this
         ._histories
         .all
         .where((value) => value.text.contains(text))
         .toList();
 
-    InputHistoryItems filterdHistoryItems =
-        InputHistoryItems.filterd(this._limit, filterdList);
-    this.list.sink.add(filterdHistoryItems);
-    this.listEmpty.sink.add(filterdHistoryItems.isEmpty);
+    InputHistoryItems filteredHistoryItems =
+        InputHistoryItems.filterd(this._limit, filteredList);
+    this.list.sink.add(filteredHistoryItems);
+    this.listEmpty.sink.add(filteredHistoryItems.isEmpty);
   }
 
   void select(String text) {

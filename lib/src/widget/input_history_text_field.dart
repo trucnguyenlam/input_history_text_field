@@ -1,5 +1,4 @@
 import 'dart:ui' as ui show BoxHeightStyle, BoxWidthStyle;
-import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -91,10 +90,10 @@ class InputHistoryTextField extends StatefulWidget {
   /// IconData of delete icon.
   final IconData? historyIcon;
 
-  /// docoration of input history row
+  /// decoration of input history row
   final Decoration? listRowDecoration;
 
-  /// docoration of input history area
+  /// decoration of input history area
   final Decoration? listDecoration;
 
   /// offset of history list

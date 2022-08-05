@@ -1,10 +1,7 @@
-import 'dart:ui';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:input_history_text_field/input_history_text_field.dart';
 import 'package:input_history_text_field/src/model/input_history_item.dart';
 import 'package:input_history_text_field/src/model/input_history_items.dart';
-import 'package:input_history_text_field/src/stream/input_history.dart';
 
 class InputHistoryTextFieldState extends State<InputHistoryTextField> {
   late InputHistoryController _inputHistoryController;
@@ -114,57 +111,61 @@ class InputHistoryTextFieldState extends State<InputHistoryTextField> {
   }
 
   Widget _historyList(BuildContext context, RenderBox render, bool isShow) {
-    final offset = render.localToGlobal(Offset.zero);
-    final listOffset = widget.listOffset ?? Offset(0, 0);
-    return Positioned(
-        top: offset.dy +
-            render.size.height +
-            (widget.listStyle == ListStyle.Badge
-                ? listOffset.dy + 10
-                : listOffset.dy),
-        left: offset.dx + listOffset.dx,
-        width: isShow ? render.size.width : 0,
-        height: isShow ? null : 0,
-        child: Material(
-          child: Container(
-            decoration: widget.listStyle == ListStyle.Badge
-                ? null
-                : widget.listDecoration ?? _listDecoration(),
-            child: StreamBuilder<InputHistoryItems>(
-              stream: this._inputHistoryController.list.stream,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || snapshot.hasError || !isShow)
-                  return SizedBox.shrink();
-                if (widget.listStyle == ListStyle.Badge) {
-                  return Wrap(
-                    children: [
-                      for (var item in snapshot.data!.all)
-                        _badgeHistoryItem(item)
-                    ],
-                  );
-                } else {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    padding: const EdgeInsets.all(0),
-                    itemCount: snapshot.data!.all.length,
-                    itemBuilder: (context, index) {
-                      return Opacity(
-                        opacity: widget.enableOpacityGradient
-                            ? 1 - index / snapshot.data!.all.length
-                            : 1,
-                        child: widget.historyListItemLayoutBuilder?.call(
-                                this._inputHistoryController,
-                                snapshot.data!.all[index],
-                                index) ??
-                            _listHistoryItem(snapshot.data!.all[index]),
-                      );
-                    },
-                  );
-                }
-              },
+    if (true == render.attached) {
+      final offset = render.localToGlobal(Offset.zero);
+      final listOffset = widget.listOffset ?? Offset(0, 0);
+      return Positioned(
+          top: offset.dy +
+              render.size.height +
+              (widget.listStyle == ListStyle.Badge
+                  ? listOffset.dy + 10
+                  : listOffset.dy),
+          left: offset.dx + listOffset.dx,
+          width: isShow ? render.size.width : 0,
+          height: isShow ? null : 0,
+          child: Material(
+            child: Container(
+              decoration: widget.listStyle == ListStyle.Badge
+                  ? null
+                  : widget.listDecoration ?? _listDecoration(),
+              child: StreamBuilder<InputHistoryItems>(
+                stream: this._inputHistoryController.list.stream,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData || snapshot.hasError || !isShow)
+                    return SizedBox.shrink();
+                  if (widget.listStyle == ListStyle.Badge) {
+                    return Wrap(
+                      children: [
+                        for (var item in snapshot.data!.all)
+                          _badgeHistoryItem(item)
+                      ],
+                    );
+                  } else {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(0),
+                      itemCount: snapshot.data!.all.length,
+                      itemBuilder: (context, index) {
+                        return Opacity(
+                          opacity: widget.enableOpacityGradient
+                              ? 1 - index / snapshot.data!.all.length
+                              : 1,
+                          child: widget.historyListItemLayoutBuilder?.call(
+                              this._inputHistoryController,
+                              snapshot.data!.all[index],
+                              index) ??
+                              _listHistoryItem(snapshot.data!.all[index]),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ),
-          ),
-        ));
+          ));
+    } else {
+      return const SizedBox.shrink();
+    }
   }
 
   Widget _badgeHistoryItem(item) {
